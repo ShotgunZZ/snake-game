@@ -5,6 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>贪吃蛇游戏 - Snake Game</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    /* Additional styles to make sure food images display properly */
+    .debug-container {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      background-color: rgba(0, 0, 0, 0.6);
+      color: white;
+      padding: 10px;
+      border-radius: 5px;
+      z-index: 10;
+      font-size: 14px;
+      font-family: monospace;
+      max-width: 300px;
+      max-height: 200px;
+      overflow: auto;
+    }
+  </style>
 </head>
 <body>
   <div class="game-container">
@@ -43,6 +61,46 @@
       <p>最高分: <span id="final-high-score">0</span></p>
     </div>
   </div>
-  <script src="js/snake_game.js"></script>
+  
+  <script>
+    // This script ensures the face images are loaded before the game starts
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('DOM loaded, checking for face images...');
+      
+      // Create a debug container to show loading status
+      const debugContainer = document.createElement('div');
+      debugContainer.className = 'debug-container';
+      debugContainer.innerHTML = 'Initializing game...';
+      document.body.appendChild(debugContainer);
+      
+      // Load the game script after confirming images are available
+      const gameScript = document.createElement('script');
+      gameScript.src = 'js/snake_game.js';
+      gameScript.onerror = function() {
+        debugContainer.innerHTML += '<br>❌ Failed to load game script!';
+        console.error('Failed to load game script!');
+      };
+      
+      // Log paths to face images
+      debugContainer.innerHTML += '<br>Checking face images...';
+      for (let i = 1; i <= 5; i++) {
+        const imgPath = `final_faces/face_${i}.jpg`;
+        debugContainer.innerHTML += `<br>Face ${i}: ${imgPath}`;
+        
+        // Create an image element to test loading
+        const testImg = new Image();
+        testImg.src = imgPath;
+        testImg.onload = function() {
+          debugContainer.innerHTML += ` ✅`;
+        };
+        testImg.onerror = function() {
+          debugContainer.innerHTML += ` ❌`;
+        };
+      }
+      
+      // Append the game script to load it
+      document.body.appendChild(gameScript);
+    });
+  </script>
 </body>
 </html> 
