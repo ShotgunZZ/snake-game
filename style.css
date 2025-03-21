@@ -100,13 +100,13 @@ canvas {
 }
 
 button {
-  padding: 8px 16px;
+  padding: 12px 24px; /* Larger buttons */
   background-color: rgba(44, 62, 80, 0.8);
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 1rem;
+  font-size: 1.2rem; /* Larger text */
   transition: background-color 0.3s;
 }
 
@@ -119,10 +119,10 @@ button:hover {
   bottom: 20px;
   right: 20px;
   text-align: left;
-  padding: 10px;
+  padding: 15px; /* More padding */
   background-color: rgba(0, 0, 0, 0.5);
-  border-radius: 5px;
-  max-width: 250px;
+  border-radius: 8px; /* Larger border radius */
+  max-width: 300px; /* Wider container */
   pointer-events: auto; /* Make instructions clickable */
   color: white;
   transition: opacity 0.3s ease;
@@ -134,14 +134,14 @@ button:hover {
 }
 
 .instructions h2 {
-  font-size: 1.1rem;
-  margin-bottom: 5px;
+  font-size: 1.3rem; /* Larger heading */
+  margin-bottom: 8px;
   color: white;
 }
 
 .instructions p {
-  margin: 3px 0;
-  font-size: 0.85rem;
+  margin: 5px 0;
+  font-size: 1rem; /* Larger text */
 }
 
 /* Game over message */
@@ -150,29 +150,28 @@ button:hover {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(0, 0, 0, 0.8);
   color: white;
-  padding: 20px;
-  border-radius: 8px;
+  padding: 30px; /* More padding */
+  border-radius: 10px; /* Larger border radius */
   text-align: center;
-  z-index: 10;
-  pointer-events: auto;
-  display: none; /* Hidden by default, shown via JS */
+  display: none;
+  z-index: 3;
+  min-width: 300px; /* Ensure minimum width */
 }
 
 .game-over h2 {
-  font-size: 2rem;
+  font-size: 2rem; /* Larger heading */
   margin-bottom: 15px;
 }
 
 .game-over p {
-  font-size: 1.2rem;
+  font-size: 1.2rem; /* Larger text */
   margin: 10px 0;
 }
 
-/* Hide instructions on smaller screens */
 @media (max-height: 600px) {
   .instructions {
-    display: none;
+    display: none; /* Hide instructions on small screens */
   }
 } 
