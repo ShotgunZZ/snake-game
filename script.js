@@ -4,12 +4,16 @@ const ctx = canvas.getContext('2d');
 const scoreElement = document.getElementById('score');
 const startBtn = document.getElementById('start-btn');
 const restartBtn = document.getElementById('restart-btn');
+const gameContainer = document.querySelector('.game-container');
+const gameOverElement = document.getElementById('game-over');
+const finalScoreElement = document.getElementById('final-score');
+const finalHighScoreElement = document.getElementById('final-high-score');
 
 // Game settings
 const gridSize = 20; // Size of each grid cell
-const gridWidth = canvas.width / gridSize;
-const gridHeight = canvas.height / gridSize;
+let gridWidth, gridHeight;
 let speed = 150; // Milliseconds between game updates
+let currentGridSize;
 
 // Game state
 let snake = []; // Array of snake segments
@@ -30,9 +34,29 @@ const highScoreContainer = document.createElement('div');
 highScoreContainer.className = 'high-score-container';
 highScoreContainer.innerHTML = `<span>最高分: </span><span id="high-score">${highScore}</span>`;
 
-// Insert high score element after score container
-const scoreContainer = document.querySelector('.score-container');
-scoreContainer.parentNode.insertBefore(highScoreContainer, scoreContainer.nextSibling);
+// Insert high score element into score display
+const scoreDisplay = document.querySelector('.score-display');
+scoreDisplay.appendChild(highScoreContainer);
+
+// Fill the entire screen with the canvas
+function resizeCanvas() {
+  // Set canvas dimensions to match window size
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  
+  // Calculate grid dimensions based on canvas size
+  // Make grid cells larger on bigger screens
+  currentGridSize = Math.max(20, Math.min(canvas.width, canvas.height) / 30);
+  
+  // Calculate grid width and height
+  gridWidth = Math.floor(canvas.width / currentGridSize);
+  gridHeight = Math.floor(canvas.height / currentGridSize);
+  
+  // Redraw game
+  if (snake.length > 0) {
+    drawGame();
+  }
+}
 
 // Initialize game
 function initGame() {
@@ -52,6 +76,9 @@ function initGame() {
   score = 0;
   scoreElement.textContent = score;
   
+  // Hide game over message
+  gameOverElement.style.display = 'none';
+  
   // Generate first food
   generateFood();
   
@@ -69,6 +96,11 @@ function generateFood() {
       x: Math.floor(Math.random() * gridWidth),
       y: Math.floor(Math.random() * gridHeight)
     };
+    
+    // Ensure food is not too close to the edges
+    if (food.x < 1 || food.x >= gridWidth - 1 || food.y < 1 || food.y >= gridHeight - 1) {
+      continue;
+    }
     
     // Check if food is on snake
     validPosition = true;
@@ -156,6 +188,9 @@ function drawGame() {
   ctx.fillStyle = '#dcdcdc';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   
+  // Draw grid (optional, for visual reference)
+  drawGrid();
+  
   // Draw snake
   for (let i = 0; i < snake.length; i++) {
     // Use different color for head
@@ -166,19 +201,19 @@ function drawGame() {
     }
     
     ctx.fillRect(
-      snake[i].x * gridSize,
-      snake[i].y * gridSize,
-      gridSize,
-      gridSize
+      snake[i].x * currentGridSize,
+      snake[i].y * currentGridSize,
+      currentGridSize,
+      currentGridSize
     );
     
     // Add border to snake segments
     ctx.strokeStyle = '#f0f0f0';
     ctx.strokeRect(
-      snake[i].x * gridSize,
-      snake[i].y * gridSize,
-      gridSize,
-      gridSize
+      snake[i].x * currentGridSize,
+      snake[i].y * currentGridSize,
+      currentGridSize,
+      currentGridSize
     );
   }
   
@@ -186,13 +221,35 @@ function drawGame() {
   ctx.fillStyle = '#e74c3c';
   ctx.beginPath();
   ctx.arc(
-    food.x * gridSize + gridSize / 2,
-    food.y * gridSize + gridSize / 2,
-    gridSize / 2 - 2,
+    food.x * currentGridSize + currentGridSize / 2,
+    food.y * currentGridSize + currentGridSize / 2,
+    currentGridSize / 2 - 2,
     0,
     Math.PI * 2
   );
   ctx.fill();
+}
+
+// Draw grid as visual guide (optional)
+function drawGrid() {
+  ctx.strokeStyle = 'rgba(200, 200, 200, 0.2)';
+  ctx.lineWidth = 0.5;
+  
+  // Draw vertical lines
+  for (let x = 0; x <= gridWidth; x++) {
+    ctx.beginPath();
+    ctx.moveTo(x * currentGridSize, 0);
+    ctx.lineTo(x * currentGridSize, canvas.height);
+    ctx.stroke();
+  }
+  
+  // Draw horizontal lines
+  for (let y = 0; y <= gridHeight; y++) {
+    ctx.beginPath();
+    ctx.moveTo(0, y * currentGridSize);
+    ctx.lineTo(canvas.width, y * currentGridSize);
+    ctx.stroke();
+  }
 }
 
 // Handle game over
@@ -201,20 +258,12 @@ function gameOver() {
   gameRunning = false;
   startBtn.textContent = '重新开始';
   
-  // Display game over message
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  // Update final score display
+  finalScoreElement.textContent = score;
+  finalHighScoreElement.textContent = highScore;
   
-  ctx.font = '30px Arial';
-  ctx.fillStyle = 'white';
-  ctx.textAlign = 'center';
-  ctx.fillText('游戏结束!', canvas.width / 2, canvas.height / 2 - 20);
-  
-  ctx.font = '20px Arial';
-  ctx.fillText(`得分: ${score}`, canvas.width / 2, canvas.height / 2 + 20);
-  
-  // Show high score
-  ctx.fillText(`最高分: ${highScore}`, canvas.width / 2, canvas.height / 2 + 50);
+  // Show game over message
+  gameOverElement.style.display = 'block';
 }
 
 // Handle keyboard input
@@ -294,7 +343,9 @@ startBtn.addEventListener('click', () => {
     gameRunning = false;
     startBtn.textContent = '开始游戏';
   } else {
-    initGame();
+    if (gameOverElement.style.display === 'block') {
+      initGame(); // Reinitialize game if it was game over
+    }
     gameRunning = true;
     startBtn.textContent = '暂停';
     gameLoop = setInterval(updateGame, speed);
@@ -310,5 +361,11 @@ restartBtn.addEventListener('click', () => {
   gameLoop = setInterval(updateGame, speed);
 });
 
-// Initialize game on load
-initGame(); 
+// Handle window resize
+window.addEventListener('resize', resizeCanvas);
+
+// Initialize on page load
+window.addEventListener('load', () => {
+  resizeCanvas();
+  initGame();
+}); 

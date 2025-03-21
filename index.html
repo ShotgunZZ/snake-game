@@ -2,21 +2,31 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>贪吃蛇游戏 - Snake Game</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="game-container">
-    <h1>贪吃蛇游戏 - Snake Game</h1>
-    <div class="score-container">
-      <span>分数: </span><span id="score">0</span>
-    </div>
     <canvas id="game" width="400" height="400"></canvas>
-    <div class="controls">
-      <button id="start-btn">开始游戏</button>
-      <button id="restart-btn">重新开始</button>
+    
+    <div class="game-overlay">
+      <div class="header-overlay">
+        <h1 class="title">贪吃蛇游戏 - Snake Game</h1>
+        <div class="score-display">
+          <div class="score-container">
+            <span>分数: </span><span id="score">0</span>
+          </div>
+          <!-- High score will be inserted here by JavaScript -->
+        </div>
+      </div>
+      
+      <div class="controls">
+        <button id="start-btn">开始游戏</button>
+        <button id="restart-btn">重新开始</button>
+      </div>
     </div>
+    
     <div class="instructions">
       <h2>操作说明</h2>
       <p>桌面设备: 使用键盘方向键控制蛇的移动</p>
@@ -25,6 +35,12 @@
       <p>← - 向左移动</p>
       <p>→ - 向右移动</p>
       <p>移动设备: 在游戏区域上滑动来控制蛇的移动方向</p>
+    </div>
+    
+    <div class="game-over" id="game-over">
+      <h2>游戏结束!</h2>
+      <p>得分: <span id="final-score">0</span></p>
+      <p>最高分: <span id="final-high-score">0</span></p>
     </div>
   </div>
   <script src="script.js"></script>
